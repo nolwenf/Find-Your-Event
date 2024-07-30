@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - backend/.env
+    networks:
+      - backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:your_password@db:5432/db_name
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=event_app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=superpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
